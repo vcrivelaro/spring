@@ -68,7 +68,7 @@ public class PostagemController {
 		else 
 		{
 
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
