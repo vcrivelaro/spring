@@ -8,6 +8,6 @@ import br.org.generation.lojagames.model.Produto;
 
 public interface ProdutoRepository  extends JpaRepository <Produto, Long>{
 	
-	public List <Produto> findAllByTemaContainingIgnoreCase (String Nome);
+	public List <Produto> findAllByNomeContainingIgnoreCase (String Nome);
 
 }

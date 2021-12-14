@@ -1,7 +1,7 @@
 package br.org.generation.lojagames.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -19,77 +19,59 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.org.generation.lojagames.model.Produto;
-import br.org.generation.lojagames.repository.CategoriaRepository;
 import br.org.generation.lojagames.repository.ProdutoRepository;
 
-@RestController
-@RequestMapping ("/produtos")
+@RestController	
+@RequestMapping("/produtos")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProdutoController {
 	
 	@Autowired
 	private ProdutoRepository produtoRepository;
 	
-	@Autowired
-	private CategoriaRepository categoriaRepository;
-	
-	@GetMapping // Lita de tipos, pegar t
-	public ResponseEntity <List<Produto>> getAll()
-	{
+	@GetMapping
+	public ResponseEntity<List<Produto>> getAll(){
 		return ResponseEntity.ok(produtoRepository.findAll());
 	}
-	
-	@GetMapping("/{id}") //Buscar por id
-	public ResponseEntity <Produto> getById(@PathVariable Long id)
-	{
+	@GetMapping("/{id}")
+	public ResponseEntity<Produto> getById(@PathVariable long id){
 		return produtoRepository.findById(id)
-		.map(resposta -> ResponseEntity.ok(resposta))
+		.map(resp-> ResponseEntity.ok(resp))
 		.orElse(ResponseEntity.notFound().build());
 	}
 	
-	@GetMapping("/nome{nome}")
-	public ResponseEntity <List<Produto>> getByNome(@PathVariable String nome)
-	{
-		return ResponseEntity.ok(produtoRepository.findAllByTemaContainingIgnoreCase(nome));
+	@GetMapping("/nome/{nome}")
+	public ResponseEntity<List<Produto>> getByName(@PathVariable String nome){
+		return ResponseEntity.ok(produtoRepository.findAllByNomeContainingIgnoreCase(nome));
+	}	
+	
+	@PostMapping
+	public ResponseEntity<Produto> post(@Valid @RequestBody Produto produto){
+		return ResponseEntity.status(HttpStatus.CREATED).body(produtoRepository.save(produto));
 	}
 	
-	@PostMapping //Adicionar Produto
-	public ResponseEntity<Produto> postProduto(@Valid @RequestBody Produto produto)
-	{
-		return categoriaRepository.findById(produto.getCategoria().getId()) //pra puxar da categoria usando o metodo e obrigatoriamente dar o @AutoWired pra puxar o objeto da model categoria
-		.map(resp -> ResponseEntity.status(HttpStatus.OK).body(produtoRepository.save(produto)))
-		.orElse(ResponseEntity.notFound().build());
-	}
-	
-	@PutMapping //Alterar produto
-	public ResponseEntity <Produto> putProduto(@Valid @RequestBody Produto produto)
-	{
+	@PutMapping
+	public ResponseEntity<Produto> putProduto(@Valid @RequestBody Produto produto) {
+					
 		return produtoRepository.findById(produto.getId())
-		.map(altera -> ResponseEntity.ok().body(produtoRepository.save(produto)))
-		.orElse(ResponseEntity.notFound().build());
-	}
-	
-	@DeleteMapping("/{id}") //deletar tema
-	public ResponseEntity<?> deleteTema(@PathVariable Long id)
-	{
-		/*return temaRepository.findById(id)
-	    .map
-	    ( delete -> {temaRepository.deleteById(id);
-	    return ResponseEntity.noContent().build();
-	    })
-	    .orElse(ResponseEntity.notFound().build()); */
-		
-       Optional<Produto> delete= produtoRepository.findById(id);
-		
-		if(delete.isPresent()) 
-		{
-			produtoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-		else 
-        {
-         return ResponseEntity.notFound().build();
-        } 
+				.map(resposta -> {
+					return ResponseEntity.ok().body(produtoRepository.save(produto));
+				})
+				.orElse(ResponseEntity.notFound().build());
+
 	}
 
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteProduto(@PathVariable long id) {
+		
+		return produtoRepository.findById(id)
+			.map(resposta -> {
+				produtoRepository.deleteById(id);
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			})
+			.orElse(ResponseEntity.notFound().build());
+	}
+
+	
+	
 }

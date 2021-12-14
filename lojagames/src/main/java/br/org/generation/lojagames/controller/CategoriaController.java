@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.org.generation.lojagames.model.Categoria;
-import br.org.generation.lojagames.model.Categoria;
 import br.org.generation.lojagames.repository.CategoriaRepository;
 
 @RestController
@@ -47,7 +46,7 @@ public class CategoriaController {
 	@GetMapping("/tipo{tipo}")
 	public ResponseEntity <List<Categoria>> getByTipo(@PathVariable String tipo)
 	{
-		return ResponseEntity.ok(categoriaRepository.findAllByTemaContainingIgnoreCase(tipo));
+		return ResponseEntity.ok(categoriaRepository.findAllByTipoContainingIgnoreCase(tipo));
 	}
 	
 	@PostMapping //Adicionar tipo
