@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.org.generation.blogpessoal.model.Tema;
+import br.org.generation.blogpessoal.model.Usuario;
 import br.org.generation.blogpessoal.repository.TemaRepository;
+import br.org.generation.blogpessoal.service.TemaService;
 
 @RestController
 @RequestMapping ("/temas")
@@ -30,6 +32,8 @@ public class TemaController {
 	
 	@Autowired
 	private TemaRepository temaRepository;
+	
+	@Autowired TemaService temaService;
 	
 	@GetMapping //Lista de temas
 	public ResponseEntity<List<Tema>> getAll()
@@ -50,18 +54,21 @@ public class TemaController {
 	{
 		return ResponseEntity.ok(temaRepository.findAllByTemaContainingIgnoreCase(tema));
 		
-	}
-
+	}	
+	
 	@PostMapping //Adicionar tema
 	public ResponseEntity<Tema> postTema(@Valid @RequestBody Tema tema)
 	{
-		return ResponseEntity.status(HttpStatus.CREATED).body(temaRepository.save(tema));
-	}
+		return temaService.cadastrarTema(tema)	
+		.map(resposta -> ResponseEntity.status(HttpStatus.CREATED).body(resposta))
+		.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+	} 
 	
 	@PutMapping //Editar tema
 	public ResponseEntity<Tema> putTema(@Valid @RequestBody Tema tema)
+	
 	{
-		 return temaRepository.findById(tema.getId())
+		 return temaService.atualizarTema(tema)
         .map(altera -> ResponseEntity.ok().body(temaRepository.save(tema)))
 		.orElse(ResponseEntity.notFound().build());
 	}

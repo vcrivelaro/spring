@@ -23,12 +23,23 @@ public class Tema {
 	private Long id;
 	
 	@NotBlank(message = "O atributo Tema é obrigatório")
-	@Size(min = 2, max = 10, message = "O atributo Tema deve ter no mínimo 2 e no máximo 10 caracteres!")
+	@Size(min = 2, max = 100, message = "O atributo Tema deve ter no mínimo 2 e no máximo 10 caracteres!")
 	private String tema;
 	
 	@OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties("tema")
     private List <Postagem> postagem;
+	
+	// Primeiro método Construtor
+
+			public Tema(Long id, String tema) {
+				this.id = id;
+				this.tema = tema;
+			}
+
+			// Segundo método Construtor
+
+			public Tema() {	}
 
 	public Long getId() {
 		return id;
